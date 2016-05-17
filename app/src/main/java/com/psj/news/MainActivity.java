@@ -27,7 +27,7 @@ import date.NewsDate;
 
 public class MainActivity extends Activity {
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    public RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] myDataset = {"ab", "cd", "ef", "gh", "ij", "kl"};
     private ArrayList<NewsDate> newsList = new ArrayList<>();
@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case 2:
                     Toast.makeText(MainActivity.this, "SUCCESSFUL", Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     break;
                 case 0:
                     Toast.makeText(MainActivity.this, "request failed", Toast.LENGTH_SHORT).show();
@@ -65,7 +66,8 @@ public class MainActivity extends Activity {
 //        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(myDataset);
+        mAdapter = new MyAdapter(this);
+
         mRecyclerView.setAdapter(mAdapter);
 //        getData();
 
@@ -183,35 +185,32 @@ public class MainActivity extends Activity {
                     }
                     case XmlPullParser.END_TAG: {
                         if ("item".equals(nodeName)) {
-                            Log.e("newsid",newsid);
-                            Log.e("title",title);
-                            Log.e("c",c);
-                            Log.e("v",v);
-                            Log.e("url",url);
-                            Log.e("postdate",postdate);
-                            Log.e("image",image);
-                            Log.e("description",description);
-                            Log.e("hitcount",hitcount);
-                            Log.e("commentcount",commentcount);
-                            Log.e("forbidcomment",forbidcomment);
-                            Log.e("tags",tags);
-                            Message msg = new Message();
-                            msg.what = 2;
-                            Bundle bundle = new Bundle();
-                            bundle.putString("newsid", newsid);
-                            bundle.putString("title", title);
-                            bundle.putString("c", c);
-                            bundle.putString("v", v);
-                            bundle.putString("url", url);
-                            bundle.putString("postdate", postdate);
-                            bundle.putString("image", image);
-                            bundle.putString("description", description);
-                            bundle.putString("hitcount", hitcount);
-                            bundle.putString("commentcount", commentcount);
-                            bundle.putString("forbidcomment", forbidcomment);
-                            bundle.putString("tags", tags);
-                            msg.setData(bundle);
-                            requestHandler.sendMessage(msg);
+//                            Log.e("newsid",newsid);
+//                            Log.e("title",title);
+//                            Log.e("c",c);
+//                            Log.e("v",v);
+//                            Log.e("url",url);
+//                            Log.e("postdate",postdate);
+//                            Log.e("image",image);
+//                            Log.e("description",description);
+//                            Log.e("hitcount",hitcount);
+//                            Log.e("commentcount",commentcount);
+//                            Log.e("forbidcomment",forbidcomment);
+//                            Log.e("tags",tags);
+
+//                            bundle.putString("newsid", newsid);
+//                            bundle.putString("title", title);
+//                            bundle.putString("c", c);
+//                            bundle.putString("v", v);
+//                            bundle.putString("url", url);
+//                            bundle.putString("postdate", postdate);
+//                            bundle.putString("image", image);
+//                            bundle.putString("description", description);
+//                            bundle.putString("hitcount", hitcount);
+//                            bundle.putString("commentcount", commentcount);
+//                            bundle.putString("forbidcomment", forbidcomment);
+//                            bundle.putString("tags", tags);
+
 
                             NewsDate newsDate = new NewsDate();
                             newsDate.setNewsid(newsid);
@@ -227,7 +226,13 @@ public class MainActivity extends Activity {
                             newsDate.setForbidcomment(forbidcomment);
                             newsDate.setTags(tags);
                             newsList.add(newsDate);
+
                         }
+                        Message msg = new Message();
+                        msg.what = 2;
+                        Bundle bundle = new Bundle();
+                        msg.setData(bundle);
+                        requestHandler.sendMessage(msg);
                         break;
                     }
                     default:
