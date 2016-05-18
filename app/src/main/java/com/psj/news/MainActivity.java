@@ -27,7 +27,7 @@ import date.NewsDate;
 
 public class MainActivity extends Activity {
     private RecyclerView mRecyclerView;
-    public RecyclerView.Adapter mAdapter;
+    public MyAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] myDataset = {"ab", "cd", "ef", "gh", "ij", "kl"};
     private ArrayList<NewsDate> newsList = new ArrayList<>();
@@ -38,7 +38,8 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 2:
-                    Toast.makeText(MainActivity.this, "SUCCESSFUL", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "request success", Toast.LENGTH_SHORT).show();
+                    mAdapter.setData(newsList);
                     mAdapter.notifyDataSetChanged();
                     break;
                 case 0:
@@ -68,39 +69,12 @@ public class MainActivity extends Activity {
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(this);
 
-        mRecyclerView.setAdapter(mAdapter);
-//        getData();
 
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url("http://api.ithome.com/xml/newslist/news.xml?r=1463450986839")
-//                .build();
-//        String url = "http://api.ithome.com/xml/newslist/news.xml?r=1463450986839";
-//        try {
-//            OkHttpUtil.getStringFromServer(url);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        performSyncHttpRequest();
+        mRecyclerView.setAdapter(mAdapter);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                /*HttpUtil.sendHttpRequest("http://api.ithome.com/xml/newslist/news.xml", new HttpCallbackListener() {
-                    @Override
-                    public void onFinish(String response) {
-                        Message msg = new Message();
-                        msg.what = 2;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("response", response);
-//                        Log.e("response",response);
-                        msg.setData(bundle);
-                        requestHandler.sendMessage(msg);
-                    }
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });*/
                 String path = "http://api.ithome.com/xml/newslist/news.xml";
                 HttpURLConnection con = null;
                 try {
@@ -127,7 +101,6 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
 
-//                return null;
             }
         }).start();
 

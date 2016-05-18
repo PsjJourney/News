@@ -1,12 +1,15 @@
 package adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.psj.news.R;
 
 import java.util.ArrayList;
@@ -27,16 +30,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // each data item is just a string in this case
 
         public TextView textView,postTime;
+        public SimpleDraweeView titleImg;
         public ViewHolder(View v) {
             super(v);
             textView = (TextView)v.findViewById(R.id.info_text);
             postTime = (TextView)v.findViewById(R.id.post_time);
+            titleImg = (SimpleDraweeView )v.findViewById(R.id.title_img);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyAdapter(Context context) {
         mContext = context;
+        Fresco.initialize(context);
     }
 
     public void setData(ArrayList<NewsDate> myDataset) {
@@ -63,6 +69,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         holder.textView.setText(newsDates.get(position).getTitle());
         holder.postTime.setText(newsDates.get(position).getPostdate());
+        holder.titleImg.setImageURI(Uri.parse(newsDates.get(position).getImage()));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
