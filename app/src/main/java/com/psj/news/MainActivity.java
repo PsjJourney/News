@@ -31,6 +31,8 @@ public class MainActivity extends Activity {
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] myDataset = {"ab", "cd", "ef", "gh", "ij", "kl"};
     private ArrayList<NewsDate> newsList = new ArrayList<>();
+    public String time = "";
+    public String path = "";
 
 
     private Handler requestHandler = new Handler() {
@@ -54,9 +56,27 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        time = System.currentTimeMillis()+"";
+        path = "http://api.ithome.com/xml/newslist/news.xml?r="+time;
+        Log.e("time",time+"");
         setContentView(R.layout.recyleview_layout);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
+        /*OkHttpClient mOkHttpClient = new OkHttpClient();
+        final Request request = new Request.Builder().url(path).build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("onFailure","onFailure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e("reponse",response.body().string());
+            }
+        });*/
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -75,7 +95,8 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String path = "http://api.ithome.com/xml/newslist/news.xml";
+
+//                String path = "http://api.ithome.com/xml/newslist/news.xml?r="+time;
                 HttpURLConnection con = null;
                 try {
                     con = (HttpURLConnection) new URL(path)
@@ -93,7 +114,7 @@ public class MainActivity extends Activity {
                         while ((line = reader.readLine()) != null) {
                             responseBuilder.append(line);
                         }
-                        Log.e("responseBuilder",responseBuilder+"");
+//                        Log.e("responseBuilder",responseBuilder+"");
                         parseXMLWithPull(responseBuilder+"");
                     }
 
