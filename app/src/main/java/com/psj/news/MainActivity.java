@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
         Log.e("time",time+"");
         setContentView(R.layout.recyleview_layout);
 
+        //用okHttp,可以使用
         /*OkHttpClient mOkHttpClient = new OkHttpClient();
         final Request request = new Request.Builder().url(path).build();
         Call call = mOkHttpClient.newCall(request);
