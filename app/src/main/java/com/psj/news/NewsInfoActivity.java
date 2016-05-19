@@ -58,7 +58,7 @@ public class NewsInfoActivity extends Activity {
                     z.setText("(" + jj + ")");
 
 //                    text.setText(Html.fromHtml(tt));
-                    Drawable defaultDrawable = NewsInfoActivity.this.getResources().getDrawable(R.mipmap.defaulta);
+                    Drawable defaultDrawable = NewsInfoActivity.this.getResources().getDrawable(R.mipmap.ic_launcher);
                     Spanned sp = Html.fromHtml(tt, new HtmlImageGetter(text, "/MyNewsImg", defaultDrawable, NewsInfoActivity.this), null);
                     text.setText(sp);
                     break;
