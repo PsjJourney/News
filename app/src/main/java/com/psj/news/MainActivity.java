@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import adapter.MyAdapter;
 import date.NewsDate;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView mRecyclerView;
     public MyAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
     private ArrayList<NewsDate> newsList = new ArrayList<>();
     public String time = "";
     public String path = "";
+    public SwipeRefreshLayout swipeRefreshLayout;
 
 
     private Handler requestHandler = new Handler() {
@@ -40,9 +42,9 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 2:
-//                    Toast.makeText(MainActivity.this, "request success", Toast.LENGTH_SHORT).show();
                     mAdapter.setData(newsList);
                     mAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
                     break;
                 case 0:
                     Toast.makeText(MainActivity.this, "request failed", Toast.LENGTH_SHORT).show();
@@ -60,10 +62,12 @@ public class MainActivity extends Activity {
         path = "http://api.ithome.com/xml/newslist/news.xml?r="+time;
         Log.e("time",time+"");
         setContentView(R.layout.recyleview_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_widget);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         //用okHttp,可以使用
         /*OkHttpClient mOkHttpClient = new OkHttpClient();
-        final Request request = new Request.Builder().url(path).build();
+        final Request request = new Request.Builder().url("http://m2.qiushibaike.com/article/list/suggest?page=1&type=refresh&count=30").build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -73,7 +77,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.e("reponse",response.body().string());
+                Log.e("reponsekkkkkkkkkkkkk",response.body().string());
             }
         });*/
 
@@ -98,30 +102,7 @@ public class MainActivity extends Activity {
             public void run() {
 
 //                String path = "http://api.ithome.com/xml/newslist/news.xml?r="+time;
-                HttpURLConnection con = null;
-                try {
-                    con = (HttpURLConnection) new URL(path)
-                            .openConnection();
-                    con.setConnectTimeout(15000);
-                    con.setRequestMethod("GET");
-                    int i=con.getResponseCode();
-                    if(i==200){
-                        InputStream in = con.getInputStream();
-//                        return parseXML(in);
-//                        Log.e("in",in.toString());
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                        StringBuilder responseBuilder = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            responseBuilder.append(line);
-                        }
-//                        Log.e("responseBuilder",responseBuilder+"");
-                        parseXMLWithPull(responseBuilder+"");
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                getDateFromInternet();
 
             }
         }).start();
@@ -129,8 +110,36 @@ public class MainActivity extends Activity {
 
     }
 
+    public void getDateFromInternet() {
+        HttpURLConnection con = null;
+        try {
+            con = (HttpURLConnection) new URL(path)
+                    .openConnection();
+            con.setConnectTimeout(15000);
+            con.setRequestMethod("GET");
+            int i=con.getResponseCode();
+            if(i==200){
+                InputStream in = con.getInputStream();
+//                        return parseXML(in);
+//                        Log.e("in",in.toString());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder responseBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBuilder.append(line);
+                }
+//                        Log.e("responseBuilder",responseBuilder+"");
+                parseXMLWithPull(responseBuilder+"");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void parseXMLWithPull(String xmlData) {
         try {
+            newsList.clear();
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser xmlPullParser = factory.newPullParser();
             xmlPullParser.setInput(new StringReader(xmlData));
@@ -242,4 +251,13 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onRefresh() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getDateFromInternet();
+            }
+        }).start();
+    }
 }
