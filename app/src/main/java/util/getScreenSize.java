@@ -6,7 +6,7 @@ import android.view.WindowManager;
 /**
  * Created by psj on 2016/5/19.
  */
-public class GetScreenSize {
+class GetScreenSize {
 
     public static int getwidth(Context context) {
         WindowManager wm = (WindowManager) context
